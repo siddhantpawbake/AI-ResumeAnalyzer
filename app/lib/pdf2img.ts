@@ -26,7 +26,7 @@ async function loadPdfJs(): Promise<any> {
 }
 
 export async function convertPdfToImage(
-  file: File
+  file: File,
 ): Promise<PdfConversionResult> {
   try {
     const lib = await loadPdfJs();
@@ -72,7 +72,7 @@ export async function convertPdfToImage(
           }
         },
         "image/png",
-        1.0
+        1.0,
       ); // Set quality to maximum (1.0)
     });
   } catch (err) {

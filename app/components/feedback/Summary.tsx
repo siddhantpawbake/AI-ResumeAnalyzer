@@ -5,14 +5,14 @@ const ScoreBadge = ({ score }: { score: number }) => {
     score > 69
       ? "bg-badge-green"
       : score > 49
-      ? "bg-badge-yellow"
-      : "bg-badge-red";
+        ? "bg-badge-yellow"
+        : "bg-badge-red";
   const textColor =
     score > 69
       ? "text-green-600"
       : score > 49
-      ? "text-yellow-600"
-      : "text-red-600";
+        ? "text-yellow-600"
+        : "text-red-600";
   const badgeText =
     score > 69 ? "Strong" : score > 49 ? "Good Start" : "Needs Work";
 
@@ -28,8 +28,8 @@ const Category = ({ title, score }: { title: string; score: number }) => {
     score > 69
       ? "text-green-600"
       : score > 49
-      ? "text-yellow-600"
-      : "text-red-600";
+        ? "text-yellow-600"
+        : "text-red-600";
 
   return (
     <div className="resume-summary">
