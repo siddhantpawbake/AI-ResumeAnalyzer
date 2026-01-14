@@ -15,11 +15,10 @@ export default function Home() {
     <main className="bg-[url('/images/bg-main.svg')] bg-cover">
       <Navbar />
       <section className="main-section">
-        <div className="page-heading">
+        <div className="page-heading py-12">
           <h1>Track your Applications & Resume score</h1>
           <h2>Review your sumbissions and check AI powered feedback.</h2>
         </div>
-      </section>
       {resumes.length > 0 && (
         <div className="resumes-section">
           {resumes.map((resume) => (
@@ -27,6 +26,7 @@ export default function Home() {
           ))}
         </div>
       )}
+      </section>
     </main>
   );
 }
