@@ -4,7 +4,16 @@ import Navbar from '~/components/Navbar'
 const Upload = () => {
     const[isProcessing,setIsProcessing]=useState();
     const[statusText,setStatusText]=useState();
-    const handleSubmit=(e:FormEvent<HTMLFormElement>)=>{}
+    const handleSubmit=(e:FormEvent<HTMLFormElement>)=>{
+        e.preventDefault();
+        const form=e.currentTarget.closest('form');
+        if(!form) return;
+        const formData=new FormData(form);
+        const companyName=formData.get('company-name');
+        const jobTitle=formData.get('job-title');
+        const jobDescription=formData.get('job-description');
+
+    }
     const[file,setFile]=useState<File|null> (null);
     const handleFileSelect=(file:File|null)=>{
         setFile(file)
