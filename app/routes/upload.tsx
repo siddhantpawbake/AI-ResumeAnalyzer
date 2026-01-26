@@ -7,6 +7,53 @@ import { convertPdfToImage } from '~/lib/pdf2img';
 import { usePuterStore } from '~/lib/puter';
 import { generateUUID } from '~/lib/utils';
 
+// Function to check if Puter.js account credits are exhausted
+const checkAccountCredits = async (): Promise<{hasCredits: boolean; credits: number; error: string | null}> => {
+    try {
+        if (!window.puter || !window.puter.auth) {
+            return {
+                hasCredits: false,
+                credits: 0,
+                error: 'Puter.js is not available'
+            };
+        }
+
+        const user = await window.puter.auth.getUser();
+        
+        // Check if user object has credits property
+        if (!user || typeof user !== 'object') {
+            return {
+                hasCredits: false,
+                credits: 0,
+                error: 'Unable to retrieve user information'
+            };
+        }
+
+        const credits = (user as any)?.credits || 0;
+        
+        // If credits are 0 or less, they are exhausted
+        if (credits <= 0) {
+            return {
+                hasCredits: false,
+                credits: 0,
+                error: 'Account credits exhausted. Please purchase credits to continue.'
+            };
+        }
+
+        return {
+            hasCredits: true,
+            credits: credits,
+            error: null
+        };
+    } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'Failed to check account credits';
+        return {
+            hasCredits: false,
+            credits: 0,
+            error: errorMessage
+        };
+    }
+};
 
 const Upload = () => {
 
@@ -14,10 +61,23 @@ const Upload = () => {
     const[isProcessing,setIsProcessing]=useState(false);
     const[statusText,setStatusText]=useState('');
     const[file,setFile]=useState<File|null> (null);
+    const[creditError,setCreditError]=useState<string|null>(null);
     const navigate=useNavigate();
 
     const handleAnalyze=async({companyName,jobTitle,jobDescription,file}:{companyName:string,jobTitle:string,jobDescription:string,file:File})=>{
         setIsProcessing(true);
+        setStatusText('Checking account credits...');
+        setCreditError(null);
+        
+        // Check if user has sufficient credits
+        const creditCheck = await checkAccountCredits();
+        if (!creditCheck.hasCredits) {
+            setIsProcessing(false);
+            setCreditError(creditCheck.error || 'Unable to verify credits');
+            setStatusText('');
+            return;
+        }
+
         setStatusText('Uploading...');
         const uploadedFile=await fs.upload([file]);
         if(!uploadedFile) return setStatusText('Failed to upload file');
@@ -78,6 +138,19 @@ const Upload = () => {
       <section className="main-section">
         <div className="page-heading">
             <h1>Smart feedback for your dream job</h1>
+            {creditError && (
+                <div className="error-message" style={{
+                    backgroundColor: '#fee',
+                    borderLeft: '4px solid #f44',
+                    padding: '12px 16px',
+                    marginBottom: '16px',
+                    borderRadius: '4px',
+                    color: '#c00',
+                    fontWeight: '500'
+                }}>
+                    ⚠️ {creditError}
+                </div>
+            )}
             {isProcessing ? (
             <>
             <h2>
